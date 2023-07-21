@@ -3,13 +3,9 @@ package com.meplus.meplusartifact.controllers;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import com.meplus.meplusartifact.models.User;
 import com.meplus.meplusartifact.repos.UserRepo;
-
-import java.lang.reflect.Type;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -34,33 +30,18 @@ public class UserController {
                 put("reason", String.format("Username: %s, already exists", user.getUsername()));
             }};
         }
-
         User savedUser = userRepo.save(user);
-
-        return new HashMap<String, String>() {{
-            put("status", "201");
-            put("userID", savedUser.getId().toString());
-            put("username", savedUser.getUsername());
-            put("firstName", savedUser.getFirstName());
-            put("lastName", savedUser.getLastName());
-
-        }};
+        return createResponse(savedUser, true);
     }
+
 
     @GetMapping("/user")
     public Map<String, String> getUserById(@RequestParam Long id) {
 
-
         try {
             User foundUser = userRepo.getById(id);
 
-            return new HashMap<String, String>() {{
-                put("status", "201");
-                put("userID", foundUser.getId().toString());
-                put("username", foundUser.getUsername());
-                put("firstName", foundUser.getFirstName());
-                put("lastName", foundUser.getLastName());
-            }};
+            return createResponse(foundUser, true);
         }
         catch(EntityNotFoundException e) {
             return new HashMap<String, String>() {{
@@ -76,16 +57,8 @@ public class UserController {
     public Map<String, String> updateUserInfo(@RequestParam Long id, @RequestParam String firstName, @RequestParam String lastName) {
 
         userRepo.updateUserInfo(id, firstName, lastName);
-
         User updatedUser = userRepo.getById(id);
-
-        return new HashMap<String, String>(){{
-            put("status", "201");
-            put("userID", updatedUser.getId().toString());
-            put("username", updatedUser.getUsername());
-            put("firstName", updatedUser.getFirstName());
-            put("lastName", updatedUser.getLastName());
-        }};
+        return createResponse(updatedUser, true);
     }
 
 
@@ -94,13 +67,7 @@ public class UserController {
 
         try {
             User userInfo = userRepo.loginUser(username, password).get(0);
-            return new HashMap<String, String>() {{
-                put("status", "201");
-                put("userId", userInfo.getId().toString());
-                put("username", userInfo.getUsername());
-                put("firstName", userInfo.getFirstName());
-                put("lastName", userInfo.getLastName());
-            }};
+            return createResponse(userInfo, true);
         }
         catch(IndexOutOfBoundsException e) {
             return new HashMap<String, String>() {{
@@ -109,6 +76,22 @@ public class UserController {
                 put("reason", "Username or Password was incorrect");
             }};
         }
+    }
+
+
+    private Map<String, String> createResponse(User user, Boolean status) {
+        Map<String, String> response = new HashMap<String, String>() {{
+
+            put("userId", user.getId().toString());
+            put("username", user.getUsername());
+            put("firstName", user.getFirstName());
+            put("lastName", user.getLastName());
+        }};
+
+        if (status == true) {
+            response.put("status", "201");
+        }
+        return response;
     }
 
 //    Temporary route to get all users currently in db, will be removed after testing stage
