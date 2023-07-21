@@ -1,15 +1,12 @@
 package com.meplus.meplusartifact.models;
 
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
-
 import java.time.LocalDateTime;
-import java.util.Date;
+
 
 @Entity
 @Table(name = "diaries")
@@ -34,7 +31,9 @@ public class Diary {
     @JoinColumn(name="user_id")
     private User user;
 
+
     public Diary() {}
+
 
     public Diary(String title, String content) {
         this.title = title;
