@@ -19,18 +19,17 @@ public class Diary {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String title;
-
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdOn;
-
-    private String content;
 
     @ManyToOne()
     @JoinColumn(name="user_id")
     private User user;
 
+    private String title;
+
+    private String content;
 
     public Diary() {}
 

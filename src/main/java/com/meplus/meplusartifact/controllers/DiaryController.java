@@ -33,8 +33,9 @@ public class DiaryController {
         User user = userRepo.getById(userId);
         diary.setUser(user);
         Diary savedDiary = diaryRepo.save(diary);
-
-        return createResponse(savedDiary, true);
+        return new HashMap<String, String>() {{
+            put("diaryId", savedDiary.getId().toString());
+        }};
     }
 
 
