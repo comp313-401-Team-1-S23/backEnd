@@ -4,6 +4,7 @@ import com.meplus.meplusartifact.models.Diary;
 import com.meplus.meplusartifact.models.User;
 import com.meplus.meplusartifact.repos.DiaryRepo;
 import com.meplus.meplusartifact.repos.UserRepo;
+import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -60,23 +61,22 @@ public class DiaryController {
 
 
     @PostMapping("/diary/update")
-    public Map<String, String> updateDiary(@RequestParam Long id, @RequestBody Map<String, Object> payload) {
+    public Map<String, String> updateDiary(@RequestParam Long diaryId, @RequestBody Map<String, Object> payload) {
 
-        diaryRepo.updateDiary(id, payload.get("title").toString(), payload.get("content").toString());
-        Diary updatedDiary = diaryRepo.getById(id);
+        diaryRepo.updateDiary(diaryId, payload.get("title").toString(), payload.get("content").toString());
+        Diary updatedDiary = diaryRepo.getById(diaryId);
 
         return createResponse(updatedDiary, true);
     }
 
 
-    @DeleteMapping("diary")
-    public Map<String, String> deleteDiary(@RequestParam Long id) {
-        diaryRepo.deleteById(id);
+    @DeleteMapping("/diary")
+    public Map<String, String> deleteDiary(@RequestParam Long diaryId) {
+        diaryRepo.deleteById(diaryId);
 
         return new HashMap<String, String>(){{
             put("status", "200");
-            put("message", String.format("Deleted diary ID: %s", id));
-
+            put("message", String.format("Deleted diary ID: %s", diaryId));
         }};
     }
 
